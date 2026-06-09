@@ -13,7 +13,7 @@ import asyncio, re, sys, os, time, random, html as html_mod, zipfile, sqlite3, t
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sqlalchemy import text as sa_text, delete as sa_delete
+from sqlalchemy import text as sa_text, delete as sa_delete, select as sa_select
 # Seeding guard — marks DB as seeded so entrypoint.sh skips on restarts
 try:
     from app.utils.check_data_loaded import mark_data_seeded as _mark_seeded
@@ -1946,6 +1946,28 @@ async def seed():
         await db.execute(sa_delete(User).where(User.role != UserRole.ADMIN))
         await db.commit()
         print("   ✓ Cleared")
+
+        # 1b. Ensure admin user exists (preserved across re-seeds)
+        print("\n👑 Ensuring admin user exists …")
+        from app.core.config import settings as _s
+        admin = (await db.execute(
+            sa_select(User).where(User.username == _s.FIRST_ADMIN_USERNAME)
+        )).scalar_one_or_none()
+        if not admin:
+            admin = User(
+                username=_s.FIRST_ADMIN_USERNAME,
+                email=_s.FIRST_ADMIN_EMAIL,
+                hashed_password=hash_password(_s.FIRST_ADMIN_PASSWORD),
+                display_name="Администратор",
+                role=UserRole.ADMIN,
+                is_active=True,
+                is_verified=True,
+            )
+            db.add(admin)
+            await db.commit()
+            print(f"   ✓ Admin created: {_s.FIRST_ADMIN_USERNAME} / {_s.FIRST_ADMIN_PASSWORD}")
+        else:
+            print(f"   ✓ Admin already exists: {_s.FIRST_ADMIN_USERNAME}")
 
         # 2. Tags
         print("\n🏷  Creating tags …")
