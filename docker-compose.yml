@@ -72,6 +72,11 @@ services:
     volumes:
       # Аватары пользователей сохраняются на хосте — переживают пересборку образа
       - ./app/static/uploads:/app/app/static/uploads
+      # Датасеты для seed-скрипта (archive.zip, archive_eng.zip, ruslit/).
+      # Монтируем с хоста чтобы не включать в Docker-образ:
+      # — archive_eng.zip > 100 МБ (GitHub limit)
+      # — ruslit/ содержит файлы с длинными кириллическими именами (overlayfs limit)
+      - ./data:/app/data:ro
     # Порт НЕ открываем наружу — только через Caddy
     expose:
       - "8000"
