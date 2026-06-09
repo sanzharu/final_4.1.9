@@ -87,6 +87,20 @@ ALTER TABLE book_subscriptions ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WIT
 ```
 
 ---
+-- Database: literaryhaven
+
+-- DROP DATABASE IF EXISTS literaryhaven;
+
+CREATE DATABASE literaryhaven
+    WITH
+    OWNER = lhuser
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Russian_Russia.1251'
+    LC_CTYPE = 'Russian_Russia.1251'
+    LOCALE_PROVIDER = 'libc'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
 
 ## Структура проекта
 
