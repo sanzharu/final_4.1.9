@@ -18,7 +18,7 @@ class Review(Base):
     __tablename__ = "reviews"
     __table_args__ = (
         UniqueConstraint("user_id", "book_id", name="uq_review_user_book"),
-        Index("ix_reviews_book_id", "book_id"),
+        # ix_reviews_book_id создаётся автоматически через index=True на колонке book_id
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
