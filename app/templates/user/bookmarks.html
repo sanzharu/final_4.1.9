@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+{% block title %}Мои закладки — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:calc(var(--navbar-h) + 2rem);padding-bottom:4rem;">
+
+  <div style="margin-bottom:1.5rem;">
+    <h1 style="font-family:var(--font-serif);font-size:2rem;font-weight:700;color:var(--text-primary);margin:0 0 0.25rem;">Мои закладки</h1>
+    <p style="color:var(--text-muted);font-family:var(--font-sans);font-size:0.9rem;">{{ total }} книг в списке</p>
+  </div>
+
+  {% if total == 0 %}
+    <div class="empty-state">
+      <h3>Закладок пока нет</h3>
+      <p>Добавляйте книги в список, чтобы следить за ними.</p>
+      <a href="/catalog" class="btn btn-primary" style="margin-top:1rem;">Перейти к каталогу</a>
+    </div>
+  {% else %}
+    {% set section_meta = [
+      ("reading",   "Читаю",       "#7c3aed"),
+      ("will_read", "Буду читать", "#0891b2"),
+      ("read",      "Прочитано",   "#16a34a"),
+      ("dropped",   "Заброшено",   "#6b7280"),
+    ] %}
+
+    <!-- Tab bar -->
+    <div class="bm-tabs" role="tablist">
+      {% for key, label, color in section_meta %}
+        {% set cnt = sections[key]|length %}
+        <button class="bm-tab{% if loop.first %} bm-tab--active{% endif %}"
+                role="tab"
+                data-tab="{{ key }}"
+                onclick="switchTab('{{ key }}')"
+                style="--tc:{{ color }};">
+          {{ label }}
+          {% if cnt > 0 %}<span class="bm-tab-badge">{{ cnt }}</span>{% endif %}
+        </button>
+      {% endfor %}
+    </div>
+
+    <!-- Tab panels -->
+    {% for key, label, color in section_meta %}
+      <div class="bm-panel{% if loop.first %} bm-panel--active{% endif %}" id="panel-{{ key }}" role="tabpanel">
+        {% set books = sections[key] %}
+        {% if books %}
+          <div class="bm-grid">
+            {% for book in books %}
+            <div class="bm-item" data-book-id="{{ book.id }}">
+              <a href="/books/{{ book.slug }}" class="bm-cover {% if book.genre %}cover-{{ book.genre.value }}{% else %}book-cover-gradient{% endif %}">
+                <div class="bm-cover-overlay">
+                  <span class="bm-cover-title">{{ book.title }}</span>
+                  <span class="bm-cover-author">{{ book.author.display_name or book.author.username if book.author else '' }}</span>
+                </div>
+              </a>
+              <div class="bm-meta">
+                <a href="/books/{{ book.slug }}" class="bm-title">{{ book.title }}</a>
+                <span class="bm-author">{{ book.author.display_name or book.author.username if book.author else '' }}</span>
+                <div class="bm-status-wrap">
+                  <button class="bm-status-btn" onclick="toggleBmMenu(this, {{ book.id }})"
+                          data-current="{{ key }}" style="--sc:{{ color }};">
+                    <span class="bm-status-label">{{ label }}</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+                  </button>
+                  <div class="bm-dropdown" id="bm-menu-{{ book.id }}" hidden>
+                    <button class="bm-opt{% if key == 'reading' %} bm-opt--active{% endif %}" onclick="setStatus({{ book.id }}, 'reading', this)">Читаю</button>
+                    <button class="bm-opt{% if key == 'will_read' %} bm-opt--active{% endif %}" onclick="setStatus({{ book.id }}, 'will_read', this)">Буду читать</button>
+                    <button class="bm-opt{% if key == 'read' %} bm-opt--active{% endif %}" onclick="setStatus({{ book.id }}, 'read', this)">Прочитано</button>
+                    <button class="bm-opt{% if key == 'dropped' %} bm-opt--active{% endif %}" onclick="setStatus({{ book.id }}, 'dropped', this)">Заброшено</button>
+                    <div class="bm-sep"></div>
+                    <button class="bm-opt bm-opt--danger" onclick="setStatus({{ book.id }}, 'remove', this)">Удалить из списка</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="bm-empty">
+            <p>Здесь пока ничего нет.</p>
+            <a href="/catalog" class="btn btn-outline" style="margin-top:0.75rem;">Найти книги</a>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+<style>
+/* ── Tabs ─────────────────────────────────────────────────────────────────── */
+.bm-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 1.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.bm-tabs::-webkit-scrollbar { display: none; }
+
+.bm-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.1rem;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.bm-tab:hover { color: var(--text-primary); }
+.bm-tab--active {
+  color: var(--tc, var(--primary));
+  font-weight: 700;
+  border-bottom-color: var(--tc, var(--primary));
+}
+.bm-tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--tc, var(--primary)) 15%, transparent);
+  color: var(--tc, var(--primary));
+  transition: background 0.15s, color 0.15s;
+}
+.bm-tab:not(.bm-tab--active) .bm-tab-badge {
+  background: var(--bg-elevated, #f0f0f0);
+  color: var(--text-muted);
+}
+
+/* ── Panels ───────────────────────────────────────────────────────────────── */
+.bm-panel { display: none; }
+.bm-panel--active { display: block; }
+
+/* ── Grid ─────────────────────────────────────────────────────────────────── */
+.bm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 1.25rem;
+}
+@media(min-width:500px) { .bm-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+@media(min-width:900px) { .bm-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); } }
+
+.bm-item { display: flex; flex-direction: column; gap: 0.5rem; }
+
+/* Cover */
+.bm-cover {
+  display: block;
+  position: relative;
+  aspect-ratio: 2/3;
+  border-radius: 10px;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.bm-cover:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 8px 24px rgba(0,0,0,0.22); }
+.bm-cover-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.08) 55%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0.6rem;
+}
+.bm-cover-title {
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.bm-cover-author {
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.72);
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Meta */
+.bm-meta { display: flex; flex-direction: column; gap: 0.1rem; }
+.bm-title {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+.bm-title:hover { color: var(--primary); }
+.bm-author {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status button */
+.bm-status-wrap { position: relative; margin-top: 0.35rem; }
+.bm-status-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  border: 1px solid color-mix(in srgb, var(--sc, #7c3aed) 30%, transparent);
+  background: color-mix(in srgb, var(--sc, #7c3aed) 10%, transparent);
+  color: var(--sc, #7c3aed);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.bm-status-btn:hover { background: color-mix(in srgb, var(--sc, #7c3aed) 20%, transparent); }
+
+/* Status dropdown */
+.bm-dropdown {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 0;
+  min-width: 175px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.2);
+  z-index: 200;
+  padding: 0.3rem;
+  animation: scaleIn 0.15s ease-out;
+}
+.bm-opt {
+  display: block;
+  width: 100%;
+  padding: 0.42rem 0.65rem;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.bm-opt:hover { background: var(--primary-dim); color: var(--primary); }
+.bm-opt--active { font-weight: 700; background: var(--primary-dim); color: var(--primary); }
+.bm-opt--danger { color: #dc2626; }
+.bm-opt--danger:hover { background: rgba(220,38,38,0.1); color: #dc2626; }
+.bm-sep { height: 1px; background: var(--border-light); margin: 0.3rem 0; }
+
+.bm-empty {
+  padding: 3rem 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+}
+</style>
+
+<script>
+const STATUS_META = {
+  reading:   ['Читаю',       '#7c3aed'],
+  will_read: ['Буду читать', '#0891b2'],
+  read:      ['Прочитано',   '#16a34a'],
+  dropped:   ['Заброшено',   '#6b7280'],
+};
+
+function switchTab(key) {
+  document.querySelectorAll('.bm-tab').forEach(t => t.classList.toggle('bm-tab--active', t.dataset.tab === key));
+  document.querySelectorAll('.bm-panel').forEach(p => p.classList.toggle('bm-panel--active', p.id === 'panel-' + key));
+}
+
+function toggleBmMenu(btn, bookId) {
+  document.querySelectorAll('.bm-dropdown').forEach(d => {
+    if (d.id !== 'bm-menu-' + bookId) d.hidden = true;
+  });
+  const menu = document.getElementById('bm-menu-' + bookId);
+  menu.hidden = !menu.hidden;
+}
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.bm-status-wrap')) {
+    document.querySelectorAll('.bm-dropdown').forEach(d => d.hidden = true);
+  }
+});
+
+async function setStatus(bookId, status, optBtn) {
+  try {
+    const res = await fetch('/api/books/' + bookId + '/reading-status', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({status})
+    });
+    if (!res.ok) return;
+
+    if (status === 'remove') {
+      const item = document.querySelector('.bm-item[data-book-id="' + bookId + '"]');
+      if (item) { item.style.transition = 'opacity 0.3s'; item.style.opacity = '0'; setTimeout(() => item.remove(), 300); }
+    } else {
+      const wrap = document.querySelector('.bm-item[data-book-id="' + bookId + '"] .bm-status-wrap');
+      const btn = wrap.querySelector('.bm-status-btn');
+      const [label, color] = STATUS_META[status];
+      btn.querySelector('.bm-status-label').textContent = label;
+      btn.style.setProperty('--sc', color);
+      wrap.querySelectorAll('.bm-opt').forEach(o => o.classList.remove('bm-opt--active'));
+      optBtn.classList.add('bm-opt--active');
+    }
+    document.querySelectorAll('.bm-dropdown').forEach(d => d.hidden = true);
+  } catch(e) { console.error(e); }
+}
+
+// Activate first non-empty tab on load
+document.addEventListener('DOMContentLoaded', () => {
+  const firstTab = document.querySelector('.bm-tab');
+  if (firstTab) switchTab(firstTab.dataset.tab);
+});
+</script>
+{% endblock %}

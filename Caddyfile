@@ -1,0 +1,47 @@
+# =============================================================================
+# Caddyfile — Literary Haven production reverse proxy
+#
+# Caddy автоматически:
+#   • получает SSL-сертификат от Let's Encrypt для вашего домена
+#   • перенаправляет HTTP → HTTPS
+#   • обновляет сертификат за 30 дней до истечения
+#
+# Домен читается из переменной окружения DOMAIN (задаётся в .env).
+# =============================================================================
+
+{$DOMAIN} {
+
+    # ── Статические файлы — раздаёт Caddy напрямую (без Python) ──────────────
+    # Гораздо быстрее, чем через FastAPI StaticFiles.
+    handle_path /static/* {
+        root * /srv/static
+        file_server {
+            # Браузерное кэширование: CSS/JS на 7 дней, картинки на 30 дней
+            pass_thru
+        }
+    }
+
+    # ── Все остальные запросы → FastAPI ───────────────────────────────────────
+    reverse_proxy app:8000 {
+        # Передаём реальный IP и протокол (нужно для secure-кук и rate limiting)
+        header_up X-Forwarded-Proto {scheme}
+        header_up X-Real-IP         {remote_host}
+        header_up X-Forwarded-For   {remote_host}
+
+        # Ждём ответа от приложения до 60 секунд (для длинных запросов)
+        transport http {
+            dial_timeout 10s
+            response_header_timeout 60s
+        }
+    }
+
+    # ── Сжатие ────────────────────────────────────────────────────────────────
+    encode gzip zstd
+
+    # ── Логи ─────────────────────────────────────────────────────────────────
+    log {
+        output stdout
+        format console
+        level  INFO
+    }
+}

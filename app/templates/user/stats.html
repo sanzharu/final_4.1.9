@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Статистика — {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top:calc(var(--navbar-h) + 2rem);padding-bottom:4rem;max-width:900px;">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;">
+    <a href="/profile/{{ current_user.username }}"
+       style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;color:var(--text-secondary);flex-shrink:0;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+    </a>
+    <h1 style="font-family:var(--font-serif);font-size:1.8rem;font-weight:700;">Статистика</h1>
+  </div>
+
+  {% if books %}
+
+  {# ── Aggregate totals ─────────────────────────────────────────────── #}
+  {% set total_views     = books | sum(attribute='views_count') %}
+  {% set total_bookmarks = books | sum(attribute='bookmarks_count') %}
+  {% set total_reviews   = books | sum(attribute='reviews_count') %}
+  {% set total_words     = books | sum(attribute='words_count') %}
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin-bottom:2.5rem;">
+    {% for label, value in [
+      ('Просмотры',  total_views | fmt_number),
+      ('Закладки',   total_bookmarks | fmt_number),
+      ('Отзывы',     total_reviews),
+      ('Слов',       total_words | fmt_words),
+    ] %}
+    <div style="background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-xl);padding:1.1rem;text-align:center;">
+      <div style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);">{{ value }}</div>
+      <div style="font-family:var(--font-sans);font-size:0.73rem;color:var(--text-muted);margin-top:0.2rem;text-transform:uppercase;letter-spacing:.04em;">{{ label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {# ── Per-book table ────────────────────────────────────────────────── #}
+  <div style="background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-xl);overflow:hidden;">
+
+    <!-- Table header -->
+    <div style="display:grid;grid-template-columns:1fr 90px 80px 70px 70px 80px 60px;gap:0;padding:0.65rem 1.25rem;border-bottom:1px solid var(--border-light);background:var(--bg-base);">
+      {% for col in ['Книга','Просмотры','Закладки','Отзывы','Рейтинг','Слов','Главы'] %}
+      <div style="font-family:var(--font-sans);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);{% if not loop.first %}text-align:right;{% endif %}">{{ col }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Rows -->
+    {% for book in books | sort(attribute='views_count', reverse=True) %}
+    <div style="display:grid;grid-template-columns:1fr 90px 80px 70px 70px 80px 60px;gap:0;padding:0.8rem 1.25rem;border-bottom:{% if not loop.last %}1px solid var(--border-light){% else %}none{% endif %};align-items:center;">
+
+      <!-- Title + status -->
+      <div style="overflow:hidden;padding-right:0.75rem;">
+        <a href="/books/{{ book.slug }}"
+           style="font-family:var(--font-sans);font-size:0.88rem;font-weight:500;color:var(--text-primary);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+           title="{{ book.title }}">{{ book.title }}</a>
+        <span style="font-family:var(--font-sans);font-size:0.72rem;color:var(--text-muted);">
+          {% if not book.is_published %}Черновик
+          {% else %}{{ book.status.value | status_label }}{% endif %}
+          · {{ book.chapters_count }} гл.
+        </span>
+      </div>
+
+      <!-- Numeric cols -->
+      {% for val in [
+        book.views_count | fmt_number,
+        book.bookmarks_count | fmt_number,
+        book.reviews_count,
+        ("%.2f" | format(book.rating)) if book.rating > 0 else '—',
+        book.words_count | fmt_words,
+        book.chapters_count,
+      ] %}
+      <div style="font-family:var(--font-sans);font-size:0.85rem;color:var(--text-primary);text-align:right;font-variant-numeric:tabular-nums;">{{ val }}</div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+
+  <div class="empty-state">
+    <h3>Книг пока нет</h3>
+    <div style="margin-top:1.25rem;">
+      <a href="/write/new" class="btn btn-primary">Написать первую книгу</a>
+    </div>
+  </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

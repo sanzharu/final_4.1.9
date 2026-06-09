@@ -1,0 +1,108 @@
+version: "3.9"
+
+# =============================================================================
+# docker-compose.yml — Literary Haven production stack
+#
+# Перед первым запуском:
+#   cp .env.example .env
+#   nano .env   ← заполните DOMAIN, POSTGRES_PASSWORD, SECRET_KEY, REFRESH_SECRET_KEY
+#
+# Запуск:
+#   docker compose up -d --build
+# =============================================================================
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-lhuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB:       ${POSTGRES_DB:-literaryhaven}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lhuser} -d ${POSTGRES_DB:-literaryhaven}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis (rate-limiting shared state между воркерами) ──────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI приложение ──────────────────────────────────────────────────────
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Database
+      DATABASE_URL:       postgresql+asyncpg://${POSTGRES_USER:-lhuser}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-literaryhaven}
+      # Redis
+      REDIS_URL:          redis://redis:6379/0
+      # Security — сгенерируйте через: python -c "import secrets; print(secrets.token_hex(32))"
+      SECRET_KEY:         ${SECRET_KEY}
+      REFRESH_SECRET_KEY: ${REFRESH_SECRET_KEY}
+      # App
+      APP_ENV:            production
+      DEBUG:              "false"
+      ALLOWED_ORIGINS:    "https://${DOMAIN}"
+      UVICORN_WORKERS:    ${UVICORN_WORKERS:-2}
+      # OAuth (оставьте пустым если не используете)
+      GOOGLE_CLIENT_ID:     ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID:     ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      VK_CLIENT_ID:         ${VK_CLIENT_ID:-}
+      VK_CLIENT_SECRET:     ${VK_CLIENT_SECRET:-}
+      OAUTH_REDIRECT_BASE:  "https://${DOMAIN}"
+    volumes:
+      # Аватары пользователей сохраняются на хосте — переживают пересборку образа
+      - ./app/static/uploads:/app/app/static/uploads
+    # Порт НЕ открываем наружу — только через Caddy
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 3
+
+  # ── Caddy — HTTPS + реверс-прокси + раздача статики ────────────────────────
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"    # HTTP (Caddy сам редиректит на 443)
+      - "443:443"  # HTTPS
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      # Конфиг
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Статические файлы (CSS, JS, картинки, аватары) — read-only
+      - ./app/static:/srv/static:ro
+      # SSL-сертификаты и кэш Caddy — ДОЛЖНЫ переживать перезапуск
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pg_data:
+  caddy_data:     # SSL-сертификаты Let's Encrypt
+  caddy_config:   # Кэш конфигурации Caddy

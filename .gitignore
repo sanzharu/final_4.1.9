@@ -1,0 +1,44 @@
+# ── Secrets — NEVER commit these ─────────────────────────────────────────────
+.env
+*.pem
+*.key
+*.crt
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# ── Testing ───────────────────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── User uploads (generated at runtime) ─────────────────────────────────────
+# Игнорируем содержимое, но сохраняем структуру папок через .gitkeep
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+app/static/uploads/avatars/*
+!app/static/uploads/avatars/.gitkeep
+uploads/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# ── Docker ───────────────────────────────────────────────────────────────────
+*.log
+
+# ── Large data archives (exceed GitHub 100 MB limit) ─────────────────────────
+data/*.zip

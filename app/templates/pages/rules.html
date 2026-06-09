@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Правила платформы — {{ site_name }}{% endblock %}
+{% block content %}
+<div class="container" style="max-width:780px;padding:calc(var(--navbar-h) + 2.5rem) 1.5rem 4rem;">
+
+  <!-- Header -->
+  <div style="margin-bottom:2.5rem;">
+    <div style="font-family:var(--font-sans);font-size:0.82rem;color:var(--text-muted);margin-bottom:0.75rem;letter-spacing:0.04em;text-transform:uppercase;">Документы</div>
+    <h1 style="font-family:var(--font-serif);font-size:2.4rem;font-weight:700;color:var(--text-primary);line-height:1.2;margin-bottom:1rem;">Правила платформы</h1>
+    <p style="font-family:var(--font-sans);font-size:1rem;line-height:1.7;color:var(--text-secondary);max-width:640px;">
+      Добро пожаловать на Literary Haven — платформу для чтения и публикации книг. Используя сервис, вы соглашаетесь соблюдать данные правила. Они направлены на защиту авторов, читателей и самой платформы, а также на создание безопасного и комфортного пространства для всех участников.
+    </p>
+  </div>
+
+  <!-- TOC -->
+  <nav style="background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-xl);padding:1.25rem 1.5rem;margin-bottom:3rem;">
+    <div style="font-family:var(--font-sans);font-size:0.78rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Содержание</div>
+    <ol style="font-family:var(--font-sans);font-size:0.9rem;color:var(--primary);line-height:1.9;margin:0;padding-left:1.25rem;">
+      <li><a href="#general" style="color:var(--primary);text-decoration:none;">Общие положения</a></li>
+      <li><a href="#copyright" style="color:var(--primary);text-decoration:none;">Контент и авторские права</a></li>
+      <li><a href="#prohibited" style="color:var(--primary);text-decoration:none;">Требования к содержанию</a></li>
+      <li><a href="#conduct" style="color:var(--primary);text-decoration:none;">Поведение пользователей</a></li>
+      <li><a href="#age" style="color:var(--primary);text-decoration:none;">Возрастные ограничения</a></li>
+      <li><a href="#quality" style="color:var(--primary);text-decoration:none;">Качество публикаций</a></li>
+      <li><a href="#reviews" style="color:var(--primary);text-decoration:none;">Отзывы и оценки</a></li>
+      <li><a href="#privacy" style="color:var(--primary);text-decoration:none;">Персональные данные и безопасность</a></li>
+      <li><a href="#commercial" style="color:var(--primary);text-decoration:none;">Коммерческая деятельность</a></li>
+      <li><a href="#moderation" style="color:var(--primary);text-decoration:none;">Модерация и ответственность</a></li>
+      <li><a href="#reports" style="color:var(--primary);text-decoration:none;">Система жалоб</a></li>
+    </ol>
+  </nav>
+
+  <!-- Sections -->
+  <div style="display:flex;flex-direction:column;gap:0;font-family:var(--font-sans);">
+
+    <!-- 1. Общие положения -->
+    <section id="general" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">01</span>
+        <h2 id="general-h" style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Общие положения</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Платформа предоставляет пользователям возможность публиковать, читать и обсуждать литературные произведения. Мы не являемся издателем контента, а выступаем в роли технического посредника. Ответственность за размещаемые материалы несут пользователи.</p>
+        <p>Администрация оставляет за собой право вносить изменения в правила в одностороннем порядке. Актуальная версия всегда доступна на данной странице. Продолжение использования сервиса означает согласие с её действующей редакцией.</p>
+      </div>
+    </section>
+
+    <!-- 2. Контент и авторские права -->
+    <section id="copyright" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">02</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Контент и авторские права</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Публикуя произведение, вы подтверждаете, что обладаете всеми необходимыми правами на его размещение. Это означает, что текст должен быть либо полностью оригинальным, либо опубликован с явного письменного разрешения правообладателя.</p>
+        <p style="font-weight:600;color:var(--text-primary);">Запрещается размещать:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>чужие произведения — полностью или частично — без разрешения правообладателя;</li>
+          <li>переводы без наличия прав на перевод;</li>
+          <li>материалы, защищённые лицензиями, не допускающими распространение.</li>
+        </ul>
+        <p>Допускается использование цитат в разумных пределах при обязательном указании источника и автора.</p>
+        <p>Администрация вправе запросить подтверждение авторства в любой момент. При поступлении обоснованной жалобы на нарушение авторских прав контент может быть временно скрыт до выяснения обстоятельств.</p>
+      </div>
+    </section>
+
+    <!-- 3. Требования к содержанию -->
+    <section id="prohibited" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">03</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Требования к содержанию</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Платформа не допускает размещение материалов, содержащих:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>призывы к насилию, экстремизму или противоправным действиям;</li>
+          <li>пропаганду ненависти, дискриминации или унижения по признаку расы, пола, национальности, религии или иным основаниям;</li>
+          <li>контент сексуального характера с участием несовершеннолетних — в любой форме, включая художественную;</li>
+          <li>детальные инструкции по совершению противоправных действий;</li>
+          <li>материалы, нарушающие действующее законодательство.</li>
+        </ul>
+        <p>Подобные материалы удаляются без предупреждения. В зависимости от тяжести нарушения аккаунт может быть заблокирован незамедлительно и без права на восстановление.</p>
+      </div>
+    </section>
+
+    <!-- 4. Поведение пользователей -->
+    <section id="conduct" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">04</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Поведение пользователей</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Мы ожидаем уважительного отношения между всеми участниками сообщества. Недопустимы:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>оскорбления, угрозы и систематическая травля (буллинг);</li>
+          <li>преследование других пользователей в комментариях или личных сообщениях;</li>
+          <li>публикация чужих личных данных без их явного согласия (доксинг);</li>
+          <li>спам: массовая рассылка сообщений, навязчивая реклама, ссылки на сторонние ресурсы вне контекста;</li>
+          <li>попытки искусственного продвижения своего контента через манипуляцию алгоритмами или координированные действия;</li>
+          <li>создание дополнительных аккаунтов с целью обхода ограничений или блокировок.</li>
+        </ul>
+        <p>Конструктивная критика произведений допустима и приветствуется. Однако она должна касаться текста, а не личности автора.</p>
+      </div>
+    </section>
+
+    <!-- 5. Возрастные ограничения -->
+    <section id="age" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">05</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Возрастные ограничения</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Авторы обязаны корректно указывать возрастной рейтинг своих произведений при публикации. Намеренное занижение рейтинга с целью расширить охват аудитории является нарушением правил.</p>
+        <p>Если произведение содержит:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li><strong style="color:var(--text-primary);">сцены насилия</strong> — укажите рейтинг не ниже 16+;</li>
+          <li><strong style="color:var(--text-primary);">откровенный или сексуальный контент</strong> — укажите рейтинг 18+ и проставьте соответствующее предупреждение;</li>
+          <li><strong style="color:var(--text-primary);">тяжёлые темы</strong> (суицид, самоповреждение, зависимость) — добавьте предупреждение в описание произведения.</li>
+        </ul>
+        <p>Это необходимо для защиты читателей и соблюдения требований законодательства. Нарушение маркировки влечёт принудительное исправление рейтинга или удаление публикации.</p>
+      </div>
+    </section>
+
+    <!-- 6. Качество публикаций -->
+    <section id="quality" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">06</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Качество публикаций</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Публикуемый контент должен быть оформлен в читаемом виде. Могут быть ограничены в видимости или удалены материалы, которые:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>состоят из бессмысленного набора символов, не несут читаемого содержания;</li>
+          <li>полностью дублируют уже опубликованные на платформе работы того же или другого автора;</li>
+          <li>намеренно вводят пользователей в заблуждение относительно жанра, сюжета или авторства.</li>
+        </ul>
+        <p>Заголовки, обложки и аннотации произведений должны соответствовать их фактическому содержанию. Использование кликбейта — намеренно misleading названий и описаний с целью привлечь трафик — недопустимо.</p>
+      </div>
+    </section>
+
+    <!-- 7. Отзывы и оценки -->
+    <section id="reviews" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">07</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Отзывы и оценки</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Система оценок и комментариев предназначена для честного обмена мнениями. Оценки должны быть искренними и отражать личное впечатление читателя от произведения.</p>
+        <p>Запрещены:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>попытки накрутки рейтинга — через мультиаккаунты, боты или сторонние сервисы;</li>
+          <li>координированные действия, направленные на намеренное занижение или завышение оценок;</li>
+          <li>оценки и комментарии, написанные в ответ на личный конфликт, а не на реальное знакомство с произведением.</li>
+        </ul>
+        <p>Комментарии не должны содержать оскорблений. Если комментарий включает спойлеры, автор обязан явно предупредить об этом в начале текста.</p>
+      </div>
+    </section>
+
+    <!-- 8. Персональные данные и безопасность -->
+    <section id="privacy" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">08</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Персональные данные и безопасность</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Запрещается публиковать личную информацию третьих лиц без их явного согласия: номера телефонов, адреса, личную переписку, фотографии, документы и иные приватные сведения.</p>
+        <p>Пользователь несёт самостоятельную ответственность за сохранность своих учётных данных. Все действия, совершённые под вашим аккаунтом, считаются совершёнными вами лично.</p>
+        <p>При обнаружении несанкционированного доступа к своему аккаунту незамедлительно сообщите об этом в службу поддержки.</p>
+      </div>
+    </section>
+
+    <!-- 9. Коммерческая деятельность -->
+    <section id="commercial" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">09</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Коммерческая деятельность</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Размещение рекламы и любая иная коммерческая активность на платформе допускаются только с явного письменного разрешения администрации.</p>
+        <p>Запрещены:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>несогласованная реклама товаров, услуг и сторонних ресурсов;</li>
+          <li>любые формы мошенничества, включая продажу фиктивных услуг или сбор средств под ложными предлогами;</li>
+          <li>обход официальных механизмов монетизации, если таковые предусмотрены платформой.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 10. Модерация и ответственность -->
+    <section id="moderation" style="padding:2rem 0;border-bottom:1px solid var(--border-light);">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">10</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Модерация и ответственность</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Администрация имеет право:</p>
+        <ul style="margin:0;padding-left:1.5rem;display:flex;flex-direction:column;gap:0.4rem;">
+          <li>редактировать или удалять контент, нарушающий правила;</li>
+          <li>ограничивать функциональность аккаунта (запрет на публикации, комментарии);</li>
+          <li>временно или навсегда блокировать пользователей.</li>
+        </ul>
+        <p>Меры применяются соразмерно тяжести нарушения и могут быть приняты без предварительного уведомления. При серьёзных нарушениях — в частности, связанных с незаконным контентом — блокировка может быть бессрочной и без права на обжалование.</p>
+        <p>В стандартных случаях пользователь имеет право обжаловать решение модерации через службу поддержки. Обращение рассматривается в течение 7 рабочих дней.</p>
+      </div>
+    </section>
+
+    <!-- 11. Система жалоб -->
+    <section id="reports" style="padding:2rem 0;">
+      <div style="display:flex;align-items:baseline;gap:0.75rem;margin-bottom:1rem;">
+        <span style="font-family:var(--font-sans);font-size:0.75rem;font-weight:700;color:var(--primary);background:color-mix(in srgb,var(--primary) 12%,transparent);padding:0.2rem 0.6rem;border-radius:999px;letter-spacing:0.04em;">11</span>
+        <h2 style="font-family:var(--font-serif);font-size:1.4rem;font-weight:700;color:var(--text-primary);margin:0;">Система жалоб</h2>
+      </div>
+      <div style="font-size:0.97rem;line-height:1.8;color:var(--text-secondary);display:flex;flex-direction:column;gap:0.75rem;">
+        <p>Каждый пользователь может сообщить о нарушении правил через кнопку «Пожаловаться» на соответствующей странице. Все обращения рассматриваются модерацией.</p>
+        <p>Злоупотребление системой жалоб — в том числе подача заведомо ложных обращений с целью навредить другому пользователю — является нарушением правил и может повлечь санкции в отношении подавшего жалобу.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer note -->
+  <div style="margin-top:3rem;padding:1.5rem;background:var(--bg-surface);border:1px solid var(--border-light);border-radius:var(--radius-xl);font-family:var(--font-sans);font-size:0.88rem;color:var(--text-muted);line-height:1.7;">
+    Используя платформу Literary Haven, вы подтверждаете, что ознакомились с данными правилами и принимаете их в полном объёме. Цель этих правил — обеспечить безопасную, честную и комфортную среду для публикации и чтения книг.
+  </div>
+
+</div>
+{% endblock %}
