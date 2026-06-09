@@ -21,6 +21,7 @@
       {% elif err == 'password_short' %}Пароль: минимум 8 символов.
       {% elif err == 'password_no_upper' %}Пароль должен содержать хотя бы одну заглавную букву (A–Z).
       {% elif err == 'password_no_digit' %}Пароль должен содержать хотя бы одну цифру (0–9).
+      {% elif err == 'passwords_mismatch' %}Пароли не совпадают. Введите одинаковый пароль в оба поля.
       {% else %}Ошибка при регистрации. Проверьте данные и попробуйте снова.
       {% endif %}
     </div>
@@ -43,6 +44,11 @@
         <input type="password" id="password" name="password" class="form-control" required minlength="8" autocomplete="new-password" placeholder="Минимум 8 символов">
         <div class="pwd-strength"><div class="pwd-bar" id="pwd-bar"></div></div>
         <div class="form-hint">Минимум 8 символов, заглавная буква (A–Z) и цифра</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="confirm_password">Повторите пароль *</label>
+        <input type="password" id="confirm_password" name="confirm_password" class="form-control" required minlength="8" autocomplete="new-password" placeholder="Введите пароль ещё раз">
+        <div id="confirm-error" style="display:none;color:#dc2626;font-size:0.82rem;margin-top:0.35rem;">Пароли не совпадают.</div>
       </div>
 
       <!-- Role selection -->
@@ -114,6 +120,18 @@ function selectRole(value) {
 }
 
 document.getElementById('reg-form').addEventListener('submit', function(e) {
+  var pwd = document.getElementById('password').value;
+  var confirmPwd = document.getElementById('confirm_password').value;
+  var confirmError = document.getElementById('confirm-error');
+
+  if (pwd !== confirmPwd) {
+    e.preventDefault();
+    confirmError.style.display = 'block';
+    document.getElementById('confirm_password').focus();
+    return false;
+  }
+  confirmError.style.display = 'none';
+
   if (!roleValue) {
     e.preventDefault();
     document.getElementById('role-error').style.display = 'block';
@@ -123,6 +141,7 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
 });
 
 var pwdInput = document.getElementById('password');
+var confirmInput = document.getElementById('confirm_password');
 var pwdBar = document.getElementById('pwd-bar');
 if (pwdInput && pwdBar) {
   pwdInput.addEventListener('input', function() {
@@ -135,7 +154,22 @@ if (pwdInput && pwdBar) {
     var colors = ['','#ef4444','#f97316','#eab308','#22c55e'];
     pwdBar.style.width = (score * 25) + '%';
     pwdBar.style.background = colors[score] || colors[1];
+    // Also re-check confirm match if already filled
+    if (confirmInput.value) checkConfirm();
   });
+}
+
+function checkConfirm() {
+  var err = document.getElementById('confirm-error');
+  if (confirmInput.value && pwdInput.value !== confirmInput.value) {
+    err.style.display = 'block';
+  } else {
+    err.style.display = 'none';
+  }
+}
+
+if (confirmInput) {
+  confirmInput.addEventListener('input', checkConfirm);
 }
 </script>
 {% endblock %}

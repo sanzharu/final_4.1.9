@@ -67,11 +67,15 @@ async def register(
     response: Response,
     username: str = Form(...),
     password: str = Form(...),
+    confirm_password: str = Form(...),
     display_name: str = Form(""),
     want_to_write: str = Form("no"),
     db: AsyncSession = Depends(get_db),
 ):
     import re as _re
+    # Validate that passwords match
+    if password != confirm_password:
+        return _redirect_with_error("/auth/register", "passwords_mismatch")
     # Validate username: 3-50 chars, latin letters, digits, _ or -
     username = username.strip().lower()
     if len(username) < 3 or len(username) > 50:
