@@ -57,9 +57,9 @@ services:
       SECRET_KEY:         ${SECRET_KEY}
       REFRESH_SECRET_KEY: ${REFRESH_SECRET_KEY}
       # App
-      APP_ENV:            production
+      APP_ENV:            development
       DEBUG:              "false"
-      ALLOWED_ORIGINS:    "https://${DOMAIN}"
+      ALLOWED_ORIGINS:    "http://${DOMAIN}"
       UVICORN_WORKERS:    ${UVICORN_WORKERS:-2}
       # OAuth (оставьте пустым если не используете)
       GOOGLE_CLIENT_ID:     ${GOOGLE_CLIENT_ID:-}
@@ -68,7 +68,7 @@ services:
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
       VK_CLIENT_ID:         ${VK_CLIENT_ID:-}
       VK_CLIENT_SECRET:     ${VK_CLIENT_SECRET:-}
-      OAUTH_REDIRECT_BASE:  "https://${DOMAIN}"
+      OAUTH_REDIRECT_BASE:  "http://${DOMAIN}"
     volumes:
       # Аватары пользователей сохраняются на хосте — переживают пересборку образа
       - ./app/static/uploads:/app/app/static/uploads
@@ -94,8 +94,7 @@ services:
     depends_on:
       - app
     ports:
-      - "80:80"    # HTTP (Caddy сам редиректит на 443)
-      - "443:443"  # HTTPS
+      - "80:80"    # HTTP
     environment:
       DOMAIN: ${DOMAIN}
     volumes:
