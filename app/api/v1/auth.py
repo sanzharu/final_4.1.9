@@ -143,8 +143,12 @@ async def login(
     password: str = Form(...),
     db: AsyncSession = Depends(get_db),
 ):
+    import logging as _logging
+    _log = _logging.getLogger(__name__)
+    _log.info("LOGIN endpoint: username='%s' password_len=%d", username, len(password))
     user = await authenticate_user_by_username(db, username, password)
     if not user:
+        _log.warning("LOGIN: auth failed for username='%s'", username)
         return _redirect_with_error("/auth/login", "invalid_credentials")
     if not user.is_active:
         return _redirect_with_error("/auth/login", "account_disabled")

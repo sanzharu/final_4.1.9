@@ -23,9 +23,16 @@ def hash_password(plain: str) -> str:
 
 def verify_password(plain: str, hashed: str) -> bool:
     """Verify password against bcrypt hash."""
+    import logging as _logging
+    _log = _logging.getLogger(__name__)
     try:
-        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
-    except Exception:
+        result = bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+        _log.info("verify_password: result=%s hash_prefix=%s hash_len=%s",
+                  result, (hashed or "")[:7], len(hashed) if hashed else 0)
+        return result
+    except Exception as _exc:
+        _log.error("verify_password EXCEPTION: %s | hash_prefix=%s hash_len=%s",
+                   _exc, (hashed or "")[:7], len(hashed) if hashed else 0)
         return False
 
 

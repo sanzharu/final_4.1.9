@@ -144,13 +144,26 @@ async def get_or_create_oauth_user(
 
 async def authenticate_user_by_username(db: AsyncSession, username: str, password: str):
     """Authenticate by username instead of email."""
+    import logging as _logging
+    _log = _logging.getLogger(__name__)
     from app.core.security import verify_password
-    user = await get_user_by_username(db, username.lower().strip())
-    if not user or not user.hashed_password:
+    lookup = username.lower().strip()
+    _log.info("AUTH attempt: username='%s'", lookup)
+    user = await get_user_by_username(db, lookup)
+    if not user:
+        _log.warning("AUTH FAIL: user '%s' not found in DB", lookup)
         return None
-    if not verify_password(password, user.hashed_password):
+    if not user.hashed_password:
+        _log.warning("AUTH FAIL: user '%s' has NULL hashed_password", lookup)
         return None
-    return user
+    _log.info("AUTH: user found id=%s is_active=%s hash_prefix=%s",
+              user.id, user.is_active, user.hashed_password[:7])
+    ok = verify_password(password, user.hashed_password)
+    if not ok:
+        _log.warning("AUTH FAIL: password mismatch for user '%s'", lookup)
+    else:
+        _log.info("AUTH OK: user '%s' authenticated", lookup)
+    return user if ok else None
 
 async def authenticate_user(db: AsyncSession, email: str, password: str) -> Optional[User]:
     user = await get_user_by_email(db, email)
